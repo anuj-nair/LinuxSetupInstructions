@@ -26,7 +26,7 @@ pacman -Syy
 
 # Disk Partitioning
 lsblk
-cfdisk // open an interface to divide the disk
+cfdisk // open an interface to partitioning the disk
 // compulsory partitioning efi root maybe even swap or if you want you can have home partition too 
 /*
 	My Preference
@@ -50,8 +50,8 @@ mkdir -p /mnt/boot/efi
 mount $(home; eg /dev/sda4) /mnt/home
 mount $(boot; eg /dev/sda1) /mnt/boot/efi
 
-# Pacstrap install arch system
-pacstrap /mnt base base-devel linux linux-firmware vim nano intel-ucode 
+# Installing the Arch system
+pacstrap /mnt base base-devel linux linux-headers linux-firmware vim nano intel-ucode 
 // Depending your processors add amd-ucode or intel-ucode
 
 # Setting up fstab 
@@ -114,9 +114,10 @@ nano /etc/hosts
 passwd //then it was ask you to enter a root password
 
 # Adding other required packages
-pacman -S grub efibootmgr networkmanager networkmanager-applet dialog linux-headers bluez bluez-utils alsa-utils pulseaudio pulseaudio-bluetooth git reflector xdg-utils xdg-user-dirs
+pacman -S grub efibootmgr networkmanager networkmanager-applet dialog bluez bluez-utils alsa-utils pulseaudio pulseaudio-bluetooth xorg xf86-video-intel  git reflector xdg-utils xdg-user-dirs
 
 /*
+	xf86-video-amd for AMD processors instead of xf86-video-intel
 	Incase u are dual booting with other distro or windows
 	add a package called "os-prober"
 */
