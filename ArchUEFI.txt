@@ -1,0 +1,171 @@
+# Increasing the Font Size
+setfont ter-132n
+
+# Loading the Keymap 
+localectl list-keymaps | grep $(which ever keyboard layout you want to search;eg US or ES etc)
+loadkeys $(which ever keyboard layout you use) // us
+
+# Internet connection
+ip a //Checking your internet setup and it will show your wifi-adapter
+# Ethernet will work straight out of the box
+
+# For wifi
+iwctl
+device list
+station wlan0 scan //instead of wlan0 use your wifi-adpater
+station wlan0 get-networks
+station wlan0 connect $(name of the network) // click enter and it will ask for password
+exit
+
+# Synchronising time with internet for package management
+timedatectl set-ntp true
+
+# Updating your pacman mirrorlist
+reflector -c $(name of ur country) -a 12 --sort rate --save /etc/pacman.d/mirrorlist
+pacman -Syy
+
+# Disk Partitioning
+lsblk
+cfdisk // open an interface to divide the disk
+// compulsory partitioning efi root maybe even swap or if you want you can have home partition too 
+/*
+	My Preference
+		efi = 520M
+		swap = 2G
+		root = 30G
+		home = Max you want to give
+*/
+
+# Formating the partion
+mkfs.fat -F32 $(efi disk name; eg /dev/sda1)
+mkswap $(swap disk name; eg /sda2)
+mkfs.ext4 $(root disk name; eg /dev/sda3)
+mkfs.ext4 $(home disk name. if you want; eg /dev/sda4)
+
+# Mounting the disk
+swapon $(swap; eg /dev/sda2) // Starting swap
+mount $(root; eg /dev/sda3) /mnt
+mkdir /mnt/home
+mkdir -p /mnt/boot/efi
+mount $(home; eg /dev/sda4) /mnt/home
+mount $(boot; eg /dev/sda1) /mnt/boot/efi
+
+# Pacstrap install arch system
+pacstrap /mnt base base-devel linux linux-firmware vim nano intel-ucode 
+// Depending your processors add amd-ucode or intel-ucode
+
+# Setting up fstab 
+genfstab -U /mnt >> /mnt/etc/fstab
+// Your system checks the fstab while booting to mount your disks
+
+# Chrooting into you new arch system
+// Basically getting into your arch linux terminal
+arch-chroot /mnt 
+
+# Setting up Time Zone
+timedatectl list-timezones | grep $(Your Place or region) // if u don't get a output it's fine
+ln -sf /usr/share/zoneinfo/  //just click 'tab' twice and you will find country or continen then 'tab' twice you will fine the region
+
+eg: ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localt  ime
+
+hwclock --systohc //sysnc with hardware clock
+
+# Setting up Locale
+nano /etc/locale.gen
+/* 
+	eg remove the hash on the language you want for english 
+	remove the hash of "#en_US.UTF-8 UTF-8"
+	then save and exit
+*/
+
+locale-gen
+
+nano /etc/locale.conf
+/*
+	then type "Lang=en_US.UTF-8" if english or enter the language you used in locale
+	then save and exit
+*/ 
+
+# Setting up the Keymap
+nano /etc/vconsole.conf
+/*
+	Then type "KEYMAP=us" or enter the keymap that you choose in the beginning
+*/
+
+# Setting up hostname
+nano /etc/hostname
+/*
+	Enter the name you wanna give the PC or Laptop
+*/
+
+# Setting up the hosts
+nano /etc/hosts
+/*
+	Append this Data Below
+
+	127.0.0.1	localhost
+	::1		localhost
+	127.0.1.1	$(hostname).localdomain $(hostname)
+
+	then save and exit
+*/
+
+# Setting a Password for Root User
+passwd //then it was ask you to enter a root password
+
+# Adding other required packages
+pacman -S grub efibootmgr networkmanager networkmanager-applet dialog linux-headers bluez bluez-utils alsa-utils pulseaudio pulseaudio-bluetooth git reflector xdg-utils xdg-user-dirs
+
+/*
+	Incase u are dual booting with other distro or windows
+	add a package called "os-prober"
+*/
+# Setting up Grub
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=Arch
+/*
+	Incase of Dual booting run the command 'os-prober' 
+	Before running the 'grub-mkconfig'
+*/
+grub-mkconfig -o /boot/grub/grub.cfg
+
+#  Enabling Startup Applications
+systemctl enable Networkmanager
+systemctl enable bluetooth
+
+# Creating New User
+useradd -mG wheel cherry // Instead of 'cherry' uses whatever username you want
+passwd cherry //giving password to your new user
+
+# Giving sudo privilages to your new user
+EDITOR=nano visudo
+/*
+	Unhash this text "# %wheel ALL=(ALL) ALL"
+	You will find it towards the end of the file
+	Then save and exit
+*/ 
+
+# Now exit chroot
+exit
+
+# Now Unmount everything and reboot   
+umount -a
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
