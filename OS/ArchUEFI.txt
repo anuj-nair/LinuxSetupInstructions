@@ -11,11 +11,11 @@ ip a //Checking your internet setup and it will show your wifi-adapter
 
 # For wifi
 iwctl
-device list
-station wlan0 scan //instead of wlan0 use your wifi-adpater
-station wlan0 get-networks
-station wlan0 connect $(name of the network) // click enter and it will ask for password
-exit
+-> device list
+-> station wlan0 scan //instead of wlan0 use your wifi-adpater
+-> station wlan0 get-networks
+-> station wlan0 connect $(name of the network) // click enter and it will ask for password
+-> exit
 
 # Synchronising time with internet for package management
 timedatectl set-ntp true

@@ -1,0 +1,121 @@
+# Increasing Font Size
+setfont ter-128n
+
+# Packages Required
+sudo pacman -S wget git nano nitrogen picom make xorg-server xorg-xinit xorg-xrandr xorg-xsetroot
+/*
+	Incase of Artix, just as precution add '--ignore xorg-server-xdmx' 
+*/
+
+# Download DWM
+git clone https://git.suckless.org/dwm
+cd dwm
+sudo make clean install
+cd ..
+
+# Download ST
+git clone https://git.suckless.org/st
+sudo make clean install
+cd ..
+
+# Download Dmenu
+git clone https://git.suckless.org/dmenu
+sudo make clean install
+cd ..
+
+# Copying .xinitrc file and Updating
+cp /etc/X11/xinit/xinitrc ~/.xinitrc
+
+nano ~/.xinitrc
+/*
+	Erase the last 5 lines
+	Then add
+"""
+	#Keyboard Layout 
+	setxkbmap us &	 
+
+	#Wallpaper
+	#nitrogen --restore &
+
+	#Compositor
+	picom -f &
+
+	#PulseAudio			 // This is for	
+	/usr/bin/start-pulseaudio-x11 & // Artix Linux 
+	
+	#Loop
+	while true; do
+		dwm > /dev/null 2>&1
+ 	done
+	
+	#DWM
+	exec dwm
+
+""
+*/
+
+startx
+
+# Patching
+
+
+
+
+
+
+// Now Your DWM workspace is setup
+/*
+	If you don't want a display manager
+	just add this
+	"
+	if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
+  		exec startx
+	fi
+	"
+	at the bottom of ~/.bashrc or ~/.zshrc 
+	Incase you are running fish shell
+	move back to bash
+	by running 
+	chsh -s bash
+	and add the above three line in ~/.bashrc and add
+	"exec fish" in the end
+	then you don't need to run startx all the time 
+	You just have to login
+*/
+
+// Let's setup a sddm display manager  
+
+# Installing YAY
+git clone https://aur.archlinux.org/yay-git.git // It helps you download and install AUR (Arch User Repository)
+cd yay-git
+makepkg -si
+yay -Syyu
+
+# Installing required Packages 
+sudo pacman -S sddm sddm-runit
+sudo yay -S xinit-xsession
+
+#Making .xinitrc exectuable
+sudo chmod 755 ~/.xinitrc // It is important to make .xinitrc to be exectuable for xinit-xsession to work
+
+#Enabling sddm
+ln -s /etc/runit/sv/sddm /run/runit/service/sddm
+
+# Reboot 
+reboot
+
+/*
+	Incase of Artix
+	It's Best to use
+
+	runit-init 0 => Shutdown
+	runit-init 6 => Reboot
+	
+	You need to use "sudo" in runit systems 
+	for shutdown and reboot unlike systemd
+	
+	Mostly "sudo reboot" works 
+	but "sudo shutdown" or "sudo shutdown now" tend to hang
+*/
+
+

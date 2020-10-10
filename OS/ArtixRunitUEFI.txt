@@ -1,10 +1,6 @@
 # Increasing the Font Size
 setfont ter-132n
 
-# Loading the Keymap 
-localectl list-keymaps | grep $(which ever keyboard layout you want to search;eg US or ES etc)
-loadkeys $(which ever keyboard layout you use) // us
-
 # Internet connection
 ip a // Checking your internet setup and it will show your wifi-adapter
 # Ethernet will work straight out of the box
@@ -18,12 +14,12 @@ ip link set wlan0 up // This time no error will be raised
 
 # Now Connecting to Wifi
 connmanctl 
- scan wifi
- services // You will find your wifi name and wifi_(some random text)
- agent on
- connect wifi_ // then tab and few characters of your wifi_(text) and it will auto-complete
+-> scan wifi
+-> services // You will find your wifi name and wifi_(some random text)
+-> agent on
+-> connect wifi_ // then tab and few characters of your wifi_(text) and it will auto-complete
  //then it will ask for passphrase and you can connect then quit from connmanctl
- quit
+-> quit
 
 # Disk Partitioning
 lsblk
