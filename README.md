@@ -4,10 +4,10 @@
 
 ## Map
 ### Base Installation of
-    -> Arch Linux
-    -> Artix Linux
+* Arch Linux
+* Artix Linux
 ### Minimal Installation of
-    -> dwm
-    -> st
-    -> dmenu
-    -> sddm 
+* dwm
+* st
+* dmenu
+* sddm 
